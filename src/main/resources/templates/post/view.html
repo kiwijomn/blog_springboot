@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+	<title>블로그 상세보기</title>
+</th:block>
+
+
+
+<th:block layout:fragment="pageHeader">
+
+	<!-- Page Header-->
+	<header class="masthead" style="background-image: url('/images/post-bg.jpg')">
+		<div class="container position-relative px-4 px-lg-5">
+			<div class="row gx-4 gx-lg-5 justify-content-center">
+				<div class="col-md-10 col-lg-8 col-xl-7">
+					<div class="post-heading">
+						<h1>Man must explore, and this is exploration at its greatest</h1>
+						<h2 class="subheading">Problems look mighty small from 150 miles up</h2>
+						<span class="meta"> Posted by <a href="#!">Start Bootstrap</a> on August 24, 2022
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+</th:block>
+
+
+
+
+
+<th:block layout:fragment="content">
+
+	<!-- Post Content-->
+	<article class="mb-4">
+		<div class="container px-12 px-lg-12">
+			<div class="row gx-4 gx-lg-5 justify-content-center">
+				<div class="col-md-12 col-lg-12 col-xl-12">
+
+					<h2 class="text-center mb-5">블로그 상세정보</h2>
+
+
+					<div class="content">
+						<section>
+							<table class="tb tb_row table">
+								<colgroup>
+									<col style="width: 10%;" />
+									<col style="width: 23%;" />
+									<col style="width: 10%;" />
+									<col style="width: 23%;" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<th scope="row" class="table-dark ">글 유형</th>
+										<td th:text="${post.noticeYn == false ? '일반' : '공지'}"></td>
+
+										<th scope="row" class="table-dark ">등록일</th>
+										<td th:text="${#temporals.format( post.createdDate, 'yyyy-MM-dd HH:mm' )}"></td>
+									</tr>
+									<tr>
+										<th scope="row" class="table-dark ">제목</th>
+										<td>[[ ${post.title} ]]</td>
+
+										<th scope="row" class="table-dark ">조회</th>
+										<td colspan="3">[[ ${post.viewCnt} ]]</td>
+									</tr>
+									<tr>
+										<th scope="row" class="table-dark ">이름</th>
+										<td colspan="3">[[ ${post.writer} ]]</td>
+									</tr>
+									<tr>
+										<th scope="row" class="table-dark" >내용</th>
+										<td colspan="3" class="post-content ">[[ ${post.content} ]]</td>
+									</tr>
+									<tr>
+										<th scope="row" class="table-dark" >첨부파일</th>
+										<td colspan="3" class="post-content ">
+										
+										<div th:if="${#strings.isEmpty(post.fileName)}" >
+										첨부파일 없음
+										</div>
+										
+										<div th:if="${not #strings.isEmpty(post.fileName)}" >
+										 <a th:href="|@{/displayFile?fileName=}${encodeFile}|">[[ ${post.orifileName} ]]</a>
+										</div>										
+										</td>
+									</tr>									
+								</tbody>
+							</table>
+							<p class="btn_set text-center">
+								<a th:href="@{/post/write.do( id=${post.id} )}" class="btn btn-outline-primary">수정</a>
+								<button type="button" onclick="deletePost();" class="btn btn-outline-danger">삭제</button>
+								<a th:href="@{/post/list.do}" class="btn btn-outline-primary">뒤로</a>
+							</p>
+						</section>
+					</div>
+					<!--/* .content */-->
+
+
+
+				</div>
+			</div>
+		</div>
+		</article>
+		
+</th:block>
+
+
+
+
+
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // 게시글 삭제
+    function deletePost() {
+      const id = [[ ${post.id} ]];
+
+      if ( !confirm(id + '번 게시글을 삭제할까요?') ) {
+        return false;
+      }
+
+      const formHtml = `
+          <form id="deleteForm" action="/post/delete.do" method="post">
+              <input type="hidden" id="id" name="id" value="${id}" />
+          </form>
+      `;
+      const doc = new DOMParser().parseFromString(formHtml, 'text/html');
+      const form = doc.body.firstChild;
+      document.body.append(form);
+      document.getElementById('deleteForm').submit();
+    }
+
+    /*]]>*/
+  </script>
+</th:block>
+
+
+</html>

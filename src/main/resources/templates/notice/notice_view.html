@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+  <title>공지</title>
+</th:block>
+
+
+<th:block layout:fragment="pageHeader">  
+
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('/images/about-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="page-heading">
+                            <h1>Notice</h1>
+                            <span class="subheading">This is what I do.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+</th:block>
+
+
+<th:block layout:fragment="content">
+
+  		<!-- Main Content-->
+        <main class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                
+                    <div th:if="${not #strings.isEmpty( post )}" class="col-md-10 col-lg-10 col-xl-10">                                     
+                    	<h2 class="mb-5">[[ ${post.title} ]]</h2>
+                        <p  class="notice-content">
+							[[ ${post.content} ]]
+                        </p>
+						<p class="mt-5 text-end">[[${#temporals.format( post.createdDate, 'yyyy-MM-dd HH:mm' )}]]</p>
+                    </div>
+                    
+                    <div th:if="${ #strings.isEmpty( post )}" class="col-md-10 col-lg-10 col-xl-10 text-center">
+                    	등록된 공지 사항이 없습니다.
+                    </div>
+                    
+                </div>
+            </div>
+        </main>
+</th:block>
+
+
+</html>

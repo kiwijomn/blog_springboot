@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.domain.post.PostMapper">
+
+    <!-- tb_post 테이블 전체 컬럼 -->
+    <sql id="postColumns">
+          id
+        , title
+        , content
+        , writer
+        , view_cnt
+        , notice_yn
+        , delete_yn
+        , orifile_name
+        , file_name
+        , created_date
+        , modified_date
+    </sql>
+
+
+    <!-- 게시글 저장 -->
+    <insert id="save" parameterType="com.study.domain.post.PostRequest" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_post (
+            <include refid="postColumns" />
+        ) VALUES (
+              #{id}
+            , #{title}
+            , #{content}
+            , #{writer}
+            , 0
+            , #{noticeYn}
+            , 0
+            , #{orifileName}
+            , #{fileName}
+            , NOW()
+            , NULL
+        )
+    </insert>
+
+
+    <!-- 게시글 상세정보 조회 -->
+    <select id="findById" parameterType="long" resultType="com.study.domain.post.PostResponse">
+        SELECT
+            <include refid="postColumns" />
+        FROM
+            tb_post
+        WHERE
+            id = #{value}
+    </select>
+
+
+    <!-- 게시글 수정 -->
+    <update id="update" parameterType="com.study.domain.post.PostRequest">
+        UPDATE tb_post
+        SET
+              modified_date = NOW()
+            , title = #{title}
+            , content = #{content}
+            , writer = #{writer}
+            , notice_yn = #{noticeYn}
+            <if test="fileName !=null and !fileName.equals('') ">
+              , orifile_name = #{orifileName}
+              ,file_name =#{fileName}
+            </if>
+        WHERE
+            id = #{id}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteById" parameterType="long">
+        UPDATE tb_post
+        SET
+            delete_yn = 1
+        WHERE
+            id = #{id}
+    </delete>
+
+
+    <!-- 파일삭제 -->
+    <delete id="deleteFile" parameterType="long">
+        UPDATE tb_post
+        SET
+            file_name = ''
+        WHERE
+            id = #{id}
+    </delete>
+
+
+
+<sql id="search">
+    <if test="searchType !=null">
+            <if test="searchType == 'title'.toString()">
+                AND title like CONCAT('%', #{keyword}, '%')
+            </if>
+     
+            <if test="searchType == 'content'.toString()">
+                AND content like CONCAT('%', #{keyword}, '%')
+            </if>
+     
+            <if test="searchType == 'all'.toString()">
+                AND ( 
+                     title like CONCAT('%', #{keyword}, '%')
+                    OR
+                     content like CONCAT('%', #{keyword}, '%')                  
+                )
+            </if>             
+    </if>
+</sql>
+
+
+	<!-- 게시글 갯수 조회  (공지사항 제외) -->
+    <select id="getTotalCount" resultType="int">
+        SELECT
+            count(id)
+        FROM
+            tb_post
+        WHERE
+            delete_yn = 0 AND notice_yn=0 
+            
+           <include refid="search" ></include>
+        ORDER BY
+            id DESC
+    </select>
+
+
+    <!-- 게시글 리스트 조회  (공지사항 제외) -->
+    <select id="findAll" resultType="com.study.domain.post.PostResponse">
+        SELECT
+            <include refid="postColumns" />
+        FROM
+            tb_post
+        WHERE
+            delete_yn = 0 AND notice_yn=0
+            
+          <include refid="search" ></include>
+              
+        ORDER BY
+            id DESC limit #{pageStart}, #{perPageNum}
+    </select>
+
+
+    <!-- 공지사항 포함 최신 게시글  5개 리스트 -->
+    <select id="lastestPost" resultType="com.study.domain.post.PostResponse">
+        SELECT
+            <include refid="postColumns" />
+        FROM
+            tb_post
+        WHERE
+            delete_yn = 0 
+            
+        ORDER BY
+        
+            id DESC limit 0, 5
+    </select>
+
+
+    <!-- 공지사항만(5개) 리스트-->
+    <select id="noticeList" resultType="com.study.domain.post.PostResponse">
+        SELECT
+            <include refid="postColumns" />
+        FROM
+            tb_post
+        WHERE
+            delete_yn = 0 AND notice_yn=1
+        ORDER BY
+            id DESC limit 0, 5
+    </select>
+    
+    
+      <!-- 마지막 공지사항 1개 상세정보 조회 -->
+    <select id="lastestNotice"  resultType="com.study.domain.post.PostResponse">
+        SELECT
+              <include refid="postColumns" />
+        FROM
+        
+            tb_post
+    	
+    	WHERE
+    	
+        id=( SELECT max(id)  FROM tb_post WHERE delete_yn = 0 AND notice_yn=1 )            
+    </select>
+    
+    
+    <!-- 조회수 증가처리 -->
+    <update id="updatePostView">
+      UPDATE tb_post
+        SET
+            view_cnt = view_cnt+1
+        WHERE
+            id = #{id}
+    	
+    </update>
+    
+
+</mapper>

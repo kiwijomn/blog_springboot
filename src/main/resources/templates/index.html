@@ -1,0 +1,69 @@
+	<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+  <title>홈</title>
+</th:block>
+
+
+<th:block layout:fragment="pageHeader">    
+        <header class="masthead" style="background-image: url('/images/home-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <h1>Clean Blog</h1>
+                            <span class="subheading">블로그</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+</th:block>        
+
+
+  
+  <th:block layout:fragment="content">
+  
+         <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-10 col-xl-10">
+                 
+                	  <!-- Post preview-->
+             
+
+                	   <div th:if="${not #lists.isEmpty( lastestList )}" th:each="row, status : ${lastestList}" class="post-preview">
+			         
+			            
+			            <a th:href="@{/post/view.do( id=${row.id} )}" >
+			            	<h2 class="post-title">[[${row.title}]]</h2>
+			            	<h3 class="post-subtitle">[[${row.noticeYn == false ? (status.size - status.index) : '공지'}]]</h3>
+			            </a>
+			            
+			            <p class="post-meta">
+			            [[${row.content}]]
+			            	
+			            	<a href="#!">[[${row.writer}]]</a>
+			               <p class="text-end">
+                           <!--형식을 지정할 local 데이터 형의 형식-->
+			            	[[${#temporals.format( row.createdDate, 'yyyy-MM-dd HH:mm' )}]]
+			            	<p>
+			            </p>
+		
+			          </div>
+                    
+                    <!-- Divider-->
+                    <hr class="my-4" />
+                    <!-- Pager-->
+                    <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" th:href="@{/post/list.do}" >더보기 →</a></div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+
+  </th:block>
+  
+
+ </html>

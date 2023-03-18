@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+	<title>블로그 작성하기</title>
+</th:block>
+
+
+
+<th:block layout:fragment="pageHeader">
+
+	<!-- Page Header-->
+	<header class="masthead" style="background-image: url('/images/post-bg.jpg')">
+		<div class="container position-relative px-4 px-lg-5">
+			<div class="row gx-4 gx-lg-5 justify-content-center">
+				<div class="col-md-10 col-lg-8 col-xl-7">
+					<div class="post-heading">
+						<h1>Man must explore, and this is exploration at its greatest</h1>
+						<h2 class="subheading">Problems look mighty small from 150 miles up</h2>
+						<span class="meta"> Posted by <a href="#!">Start Bootstrap</a> on August 24, 2022
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+</th:block>
+
+
+<th:block layout:fragment="content">
+
+
+    
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-12 px-lg-12">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-12 col-lg-12 col-xl-12">
+							
+					<h2 class="text-center mb-5">블로그 등록</h2>
+				
+				
+
+
+	<div class="content">
+		<section>
+		
+			<form id="saveForm" method="post" autocomplete="off" enctype="multipart/form-data">
+				<!--/* 게시글 수정인 경우, 서버로 전달할 게시글 번호 (PK) */-->
+				<input type="hidden" id="id" name="id" th:if="${post != null}" th:value="${post.id}" />
+
+				<!--/* 서버로 전달할 공지글 여부 */-->
+				<input type="hidden" id="noticeYn" name="noticeYn" />
+				<table class="tb tb_row table">
+					<colgroup>
+						<col style="width: 15%;" />
+						<col style="width: 35%;" />
+						<col style="width: 15%;" />
+						<col style="width: 35%;" />
+					</colgroup>
+					<tbody>
+						<tr>
+							<th scope="row">공지글</th>
+							<td><span class="chkbox">
+							<input type="checkbox" id="isNotice" name="isNotice" class="chk" /><i></i>
+							<label for="isNotice"> 설정</label></span></td>
+
+							<th scope="row">등록일</th>
+							<td colspan="3"><input type="text" id="createdDate"  class="form-control" name="createdDate" readonly /></td>
+						</tr>
+
+						<tr>
+							<th>제목 <span class="es">필수 입력</span></th>
+							<td colspan="3"><input type="text" id="title" name="title"  
+							class="form-control" maxlength="50" placeholder="제목을 입력해 주세요." /></td>
+						</tr>
+
+						<tr>
+							<th>이름 <span class="es">필수 입력</span></th>
+							<td colspan="3"><input type="text" id="writer" name="writer" 
+							  class="form-control" maxlength="10" placeholder="이름을 입력해 주세요." /></td>
+						</tr>
+
+						<tr>
+							<th>내용 <span class="es">필수 입력</span></th>
+							<td colspan="3"><textarea id="content" name="content"  class="form-control" cols="50" rows="10" placeholder="내용을 입력해 주세요."></textarea></td>
+						</tr>
+						
+						
+						<tr>
+							<th>첨부파일 </th>
+							<td colspan="3">
+
+								<div th:if="${post == null}" >
+									<input style="display: block;" type="file" id="input-image"  name="uploadfile"  >
+								</div>
+
+
+
+								<div th:if="${post != null}" >
+
+									<div th:if="${ #strings.isEmpty(post.fileName)}" >
+										<input style="display: block;" type="file" id="input-image"  name="uploadfile"  >
+									</div>
+
+									<div th:if="${not #strings.isEmpty(post.fileName)}" >
+										<a th:href="|@{/displayFile?fileName=}${encodeFile}|">[[ ${post.orifileName} ]]</a>
+										<button type="button" class="btn btn-danger" onclick="imgDelete(this)"  >파일 삭제</button>
+									</div>
+								</div>
+
+
+
+							   	
+							   			
+							</td>
+						</tr>
+						
+						
+						
+						
+					</tbody>
+				</table>
+			</form>
+			
+			<p class="btn_set text-center">
+				<button type="button" id="saveBtn" onclick="savePost();" class="btn btn-outline-primary">저장</button>
+				<a th:href="@{/post/list.do}" class="btn btn-outline-primary">뒤로</a>
+			</p>
+		</section>
+	</div>
+	<!--/* .content */-->
+
+
+
+                    </div>
+                </div>
+            </div>
+        </article>
+
+</th:block>
+
+
+
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    window.onload = () => {
+      renderPostInfo();
+    }
+
+
+    // 등록일 초기화
+    function initCreatedDate() {
+      document.getElementById('createdDate').value = dayjs().format('YYYY-MM-DD');
+    }
+
+
+    // 게시글 상세정보 렌더링
+    function renderPostInfo() {
+      const post = [[ ${post} ]];
+
+      if ( !post ) {
+        initCreatedDate();
+        return false;
+      }
+
+      const form = document.getElementById('saveForm');
+      const fields = ['id', 'title', 'content', 'writer', 'noticeYn'];
+      form.isNotice.checked = post.noticeYn;
+      form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
+
+      fields.forEach(field => {
+        form[field].value = post[field];
+      })
+    }
+
+
+    // 게시글 저장(수정)
+    function savePost() {
+      const form = document.getElementById('saveForm');
+      const fields = [form.title, form.writer, form.content];
+      const fieldNames = ['제목', '이름', '내용'];
+
+      for (let i = 0, len = fields.length; i < len; i++) {
+        isValid(fields[i], fieldNames[i]);
+      }
+
+      document.getElementById('saveBtn').disabled = true;
+      form.noticeYn.value = form.isNotice.checked;
+      form.action = [[ ${post == null} ]] ? '/post/save.do' : '/post/update.do';
+      form.submit();
+    }
+
+    function imgDelete(){
+    	if(confirm("정말 첨부파일 삭제 하시겠습니까?")){
+    		
+    		$.ajax({
+    			url : "/post/deleteFile.do",
+    			data :{
+    				id:$("#id").val()
+    			},
+    			type : 'POST',
+    			success : function(data) {	
+    				console.log(data);
+    				if(data==="success"){
+    					location.reload();
+    				}
+    				
+    			},
+    			
+    			error : function(jqXHR, textStatus,errorThrown) {
+    				console.log(textStatus + " "+ errorThrown);
+    			}
+    		});
+    	}
+    }	
+    
+    /*]]>*/
+  </script>
+  
+</th:block>
+
+
+</html>
