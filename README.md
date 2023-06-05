@@ -1,3 +1,11 @@
-![image](https://github.com/kiwijomn/blog_springboot/assets/116738827/33b3ff52-86b8-4627-aab3-b8c407e0bc8f)
+블로그 with SpringBoot + Mybatis
 
-![image](https://github.com/kiwijomn/blog_springboot/assets/116738827/8c5f93da-8ad6-4871-b823-14d94e988cc2)
+![home](https://github.com/kiwijomn/blog_springboot/assets/116738827/cc28dda0-daaa-421d-b213-838726e45f58)
+
+![notice](https://github.com/kiwijomn/blog_springboot/assets/116738827/fd1e8d5a-767b-4f87-9098-9989181a3c38)
+
+![게시글](https://github.com/kiwijomn/blog_springboot/assets/116738827/e3aa888e-6386-4e11-8a2f-37c0a95dcac4)
+
+![detail](https://github.com/kiwijomn/blog_springboot/assets/116738827/2587528f-a58c-4cc2-8a90-4b346000252c)
+
+![contact](https://github.com/kiwijomn/blog_springboot/assets/116738827/af6b669a-100d-4237-89bb-720e339141bf)
