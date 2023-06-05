@@ -1,4 +1,4 @@
-블로그 with SpringBoot + Mybatis
+### 블로그 with SpringBoot + Mybatis
 
 ![home](https://github.com/kiwijomn/blog_springboot/assets/116738827/cc28dda0-daaa-421d-b213-838726e45f58)
 
